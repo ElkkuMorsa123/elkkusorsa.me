@@ -44,7 +44,7 @@ function checkImageExists(path) {
 
 async function getImagesBySequentialNames() {
     const foundImages = [];
-    const maxImagesToCheck = 300;
+    const maxImagesToCheck = 50;
     let missingStreak = 0;
     let foundAny = false;
 
@@ -69,7 +69,7 @@ async function getImagesBySequentialNames() {
             missingStreak++;
         }
 
-        if (foundAny && missingStreak >= 20) {
+        if (foundAny && missingStreak >= 3) {
             break;
         }
     }
@@ -106,7 +106,6 @@ function renderGallery(imagePaths) {
 }
 
 async function initializeGallery() {
-    // GitHub Pages doesn't support directory listings, use sequential check
     const sequentialImages = await getImagesBySequentialNames();
     renderGallery(sequentialImages);
 }
