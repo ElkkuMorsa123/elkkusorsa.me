@@ -17,13 +17,12 @@ function checkImageExists(path) {
     });
 }
 
-async function getImagesBySequentialNames() {
+async function getAdditionalImages(startIndex) {
     const foundImages = [];
     const maxImagesToCheck = 50;
     let missingStreak = 0;
-    let foundAny = false;
 
-    for (let index = 1; index <= maxImagesToCheck; index++) {
+    for (let index = startIndex; index <= maxImagesToCheck; index++) {
         let foundForCurrentIndex = false;
 
         for (const ext of imageExtensions) {
@@ -32,7 +31,6 @@ async function getImagesBySequentialNames() {
 
             if (exists) {
                 foundImages.push(candidatePath);
-                foundAny = true;
                 foundForCurrentIndex = true;
                 break;
             }
@@ -40,11 +38,11 @@ async function getImagesBySequentialNames() {
 
         if (foundForCurrentIndex) {
             missingStreak = 0;
-        } else if (foundAny) {
+        } else {
             missingStreak++;
         }
 
-        if (foundAny && missingStreak >= 1) {
+        if (missingStreak >= 1) {
             break;
         }
     }
@@ -81,8 +79,17 @@ function renderGallery(imagePaths) {
 }
 
 async function initializeGallery() {
-    const sequentialImages = await getImagesBySequentialNames();
-    renderGallery(sequentialImages);
+    // Load first 6 images immediately for fast initial display
+    const initialImages = ['img/6.png', 'img/5.png', 'img/4.png', 'img/3.png', 'img/2.png', 'img/1.png'];
+    renderGallery(initialImages);
+    
+    // Check for additional images in the background
+    const additionalImages = await getAdditionalImages(7);
+    
+    if (additionalImages.length > 0) {
+        const allImages = [...additionalImages, ...initialImages];
+        renderGallery(sortFilesNatural(allImages));
+    }
 }
 
 window.addEventListener('load', initializeGallery);
