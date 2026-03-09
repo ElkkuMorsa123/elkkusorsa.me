@@ -106,18 +106,9 @@ function renderGallery(imagePaths) {
 }
 
 async function initializeGallery() {
-    try {
-        const images = await getImagesFromDirectoryListing();
-        renderGallery(images);
-    } catch {
-        const sequentialImages = await getImagesBySequentialNames();
-
-        if (sequentialImages.length > 0) {
-            renderGallery(sequentialImages);
-        } else {
-            renderGallery(['img/6.png', 'img/5.png', 'img/4.png', 'img/3.png', 'img/2.png', 'img/1.png']);
-        }
-    }
+    // GitHub Pages doesn't support directory listings, use sequential check
+    const sequentialImages = await getImagesBySequentialNames();
+    renderGallery(sequentialImages);
 }
 
 window.addEventListener('load', initializeGallery);
