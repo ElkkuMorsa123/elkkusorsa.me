@@ -2,35 +2,10 @@ let viewAllExpanded = false;
 
 const viewAllBtn = document.getElementById('viewAllBtn');
 const gallery = document.getElementById('gallery');
-const imageExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.avif'];
-
-function isImageFile(fileName) {
-    const lowerName = fileName.toLowerCase();
-    return imageExtensions.some((ext) => lowerName.endsWith(ext));
-}
+const imageExtensions = ['.png', '.jpg', '.jpeg', '.webp'];
 
 function sortFilesNatural(files) {
     return files.sort((a, b) => b.localeCompare(a, 'fi', { numeric: true, sensitivity: 'base' }));
-}
-
-async function getImagesFromDirectoryListing() {
-    const response = await fetch('img/');
-
-    if (!response.ok) {
-        throw new Error('Directory listing ei ole saatavilla');
-    }
-
-    const html = await response.text();
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const links = Array.from(doc.querySelectorAll('a'));
-
-    const files = links
-        .map((link) => link.getAttribute('href') || '')
-        .map((href) => decodeURIComponent(href.trim()))
-        .filter((href) => href && !href.endsWith('/') && isImageFile(href))
-        .map((href) => href.replace(/^\.\//, ''));
-
-    return sortFilesNatural(Array.from(new Set(files))).map((file) => `img/${file}`);
 }
 
 function checkImageExists(path) {
@@ -69,7 +44,7 @@ async function getImagesBySequentialNames() {
             missingStreak++;
         }
 
-        if (foundAny && missingStreak >= 3) {
+        if (foundAny && missingStreak >= 1) {
             break;
         }
     }
